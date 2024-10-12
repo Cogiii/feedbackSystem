@@ -21,6 +21,7 @@ let db = new sqlite3.Database('./feedback.db', (err) => {
 const createFeedbackTableSql = `
     CREATE TABLE IF NOT EXISTS Feedback (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user TEXT NOT NULL,
         rating TEXT NOT NULL,
         comment TEXT,
         date TEXT NOT NULL
@@ -40,6 +41,7 @@ app.use(`/`, express.static('./public/'));
 app.post('/submit-rating', body('comment').trim().escape(), (req, res) => {
     const rating = req.body.rating;
     const comment = req.body.comment;
+    const user = req.body.user;
     const result = validationResult(req);
     if (!result.isEmpty()) {
       return res.send({ errors: result.array() });
@@ -48,9 +50,10 @@ app.post('/submit-rating', body('comment').trim().escape(), (req, res) => {
     // Log the received rating to the console
     console.log(`Received rating: ${rating}`);
     console.log(`Received comment: ${comment}`);
+    console.log(`Received user: ${user}`);
     var date = new Date().toISOString();
 
-    let sql = `INSERT INTO Feedback(rating, comment, date) VALUES('${rating}', '${comment}', '${date.split('T')[0]}')`;
+    let sql = `INSERT INTO Feedback(user, rating, comment, date) VALUES('${user}', '${rating}', '${comment}', '${date.split('T')[0]}')`;
     console.log(sql);
 
     db.run(sql, function (err) {
@@ -67,14 +70,14 @@ app.post('/submit-rating', body('comment').trim().escape(), (req, res) => {
 app.get('/getfeedbacks', async (req, res) => {
     let sql = `SELECT * FROM Feedback`;
     var stri = new Array();
-    stri.push("rating,comment,date");
+    stri.push("id, user, rating, comment, date");
 
     db.all(sql, [], (err, rows) => {
         if (err) {
             throw err;
         }
         rows.forEach((row) => {
-            let string = `${row.rating}, ${row.comment}, ${row.date}`;
+            let string = `${row.id}, ${row.user}, ${row.rating}, ${row.comment}, ${row.date}`;
             stri.push(string);
         });
         res.send(`<p>${stri.join("<br>")}</p>`);

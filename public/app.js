@@ -2,11 +2,15 @@ const ratingsRequiringComment = ['Bad', 'Average'];
 const ratings = document.querySelectorAll('.rating img');
 const submitBtn = document.querySelector('.submit-btn');
 const feedbackForm = document.querySelector('.feedback-form');
+const feedbackRatings = document.querySelector('.feedback-ratings');
 const finishForm = document.querySelector('.feedback-respond');
 const feedbackComment = document.querySelector('.feedback-comment');
+const employeeBtn = document.getElementById('employee-btn');
+const studentBtn = document.getElementById('student-btn');
 
 let selectedRating = '';
 let comment = "";
+let selectedUser = "";
 
 document.addEventListener('DOMContentLoaded', function() {
   ratings.forEach((rating) => {
@@ -30,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function() {
   });
   
   submitBtn.addEventListener('click', function() {
-    if (selectedRating !== '') {
+    if (selectedRating !== '' && selectedUser !== '') {
       feedbackForm.style.opacity = 0;
       finishForm.style.opacity = 1;
       finishForm.style.visibility = 'visible';
@@ -54,7 +58,8 @@ document.addEventListener('DOMContentLoaded', function() {
         },
         body: JSON.stringify({ 
             rating: selectedRating, 
-            comment: comment
+            comment: comment,
+            user: selectedUser
           })
       })
       .then(response => response.json())
@@ -65,16 +70,47 @@ document.addEventListener('DOMContentLoaded', function() {
       .catch(error => console.error('Error:', error));
 
       reset();
+    } else {
+      if(selectedRating == '') {
+        feedbackRatings.classList.add('shake-fields');
+      }
+
+      if(selectedUser == '') {
+        employeeBtn.classList.add('shake-fields');
+      studentBtn.classList.add('shake-fields');
+      }
+      
+      setTimeout(() => {
+        feedbackRatings.classList.remove('shake-fields');
+        employeeBtn.classList.remove('shake-fields');
+        studentBtn.classList.remove('shake-fields');
+      }, 1000);
+      
     }
   });
 
 });
 
+function chooseUser(user) {
+  if (user == "employee") {
+    studentBtn.classList.remove('user-active');
+    employeeBtn.classList.add('user-active');
+    selectedUser = "employee";
+  } else if (user == "student") {
+    studentBtn.classList.add('user-active');
+    employeeBtn.classList.remove('user-active');
+    selectedUser = "student";
+  }
+}
+
 // Reset all inputs and ratings
 function reset() {
   selectedRating = '';
   comment = '';
+  selectedUser = '';
   feedbackComment.value = '';
   feedbackComment.style.display = 'none';
   ratings.forEach((img) => img.style.filter = 'grayscale(100%)');
+  studentBtn.classList.remove('user-active');
+  employeeBtn.classList.remove('user-active');
 }
