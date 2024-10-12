@@ -1,11 +1,13 @@
+const ratingsRequiringComment = ['Bad', 'Average'];
+const ratings = document.querySelectorAll('.rating img');
+const submitBtn = document.querySelector('.submit-btn');
+const feedbackForm = document.querySelector('.feedback-form');
+const finishForm = document.querySelector('.feedback-respond');
+const feedbackComment = document.querySelector('.feedback-comment');
+
+let selectedRating = '';
+
 document.addEventListener('DOMContentLoaded', function() {
-  const ratings = document.querySelectorAll('.rating img');
-  const submitBtn = document.querySelector('.submit-btn');
-  const feedbackForm = document.querySelector('.feedback-form');
-  const finishForm = document.querySelector('.feedback-respond');
-
-  let selectedRating = '';
-
   ratings.forEach((rating) => {
       rating.addEventListener('click', function() {
           // Reset all rating images to grayscale
@@ -16,6 +18,13 @@ document.addEventListener('DOMContentLoaded', function() {
           
           // Get the rating stored in this variable
           selectedRating = this.name;
+
+          if (ratingsRequiringComment.includes(selectedRating)) {
+              feedbackComment.style.display = 'block';
+          } else {
+              feedbackComment.style.display = 'none';
+          }
+
       });
   });
   
@@ -53,9 +62,10 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 
-  // Reset all inputs and ratings
-  function reset() {
-    selectedRating = '';
-    ratings.forEach((img) => img.style.filter = 'grayscale(100%)');
-  }
 });
+
+// Reset all inputs and ratings
+function reset() {
+  selectedRating = '';
+  ratings.forEach((img) => img.style.filter = 'grayscale(100%)');
+}

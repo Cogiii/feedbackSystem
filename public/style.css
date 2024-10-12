@@ -61,7 +61,7 @@ body {
     color: white;
     border-radius: 10px;
     font-size: large;
-    margin: 25px;
+    margin: 15px;
     cursor: pointer;
 }
 .submit-btn:hover {
@@ -79,6 +79,20 @@ body {
     transition: opacity 1s ease;
     opacity: 0;
     visibility: hidden;
+}
+
+.feedback-comment {
+    margin: 10px auto;
+    width: 600px;
+    height: auto;
+    padding: 12px 20px;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    background-color: #f8f8f8;
+    font-size: medium;
+    resize: none;
+    display: block;
+    display: none;
 }
 
 @media only screen and (max-width: 900px) {
@@ -99,6 +113,11 @@ body {
     .rating small {
         display: block;
         font-size: small;
+    }
+    .feedback-comment {
+        width: 70%;
+        font-size: small;
+        padding: 9px 16px;
     }
 }
 
@@ -122,6 +141,11 @@ body {
         width: 120px;
         font-size: small
     }
+
+    .feedback-comment {
+        font-size: x-small;
+        padding: 7px 12px;
+    }
 }
 @media only screen and (max-width: 400px) {
     .container {
@@ -142,6 +166,11 @@ body {
     .submit-btn {
         width: 100px;
         font-size: x-small
+    }
+
+    .feedback-comment {
+        font-size: xx-small;
+        padding: 6px 10px;
     }
 }
 
