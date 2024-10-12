@@ -39,7 +39,7 @@ feedbackSystem
 - **Node.js**: JavaScript runtime used for building the server-side logic.
 - **Express.js**: Web framework for Node.js used to create HTTP routes.
 - **Vanilla JavaScript**: Client-side logic for handling user input.
-- **MySQL**: Database system for storing user feedback ratings.
+- **SQLite**: Database system for storing user feedback ratings.
 - **HTML/CSS**: Frontend structure and styling for the feedback form.
 - **Body-parser**: Middleware to handle incoming JSON data in requests.
 
@@ -52,7 +52,7 @@ feedbackSystem
 Ensure that you have the following installed on your machine:
 - **Node.js** (version 14 or higher)
 - **npm** (Node Package Manager, usually comes with Node.js)
-- **MySQL**: Make sure MySQL server is installed and running.
+- **SQLite**: Make sure SQLite is installed.
 
 ### Steps to Setup the Project
 
@@ -70,7 +70,8 @@ Ensure that you have the following installed on your machine:
     npm start
 
 This will start the Node.js server on port 3000 by default.
+The SQLite database is saved in feedback.db.
 
 4. **Access the Feedback Form**:
     Open your web browser and go to:
-    http://localhost:3000/feedback
+    http://localhost:3000/
