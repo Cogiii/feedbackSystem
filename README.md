@@ -16,7 +16,21 @@ This is a simple **Feedback Rating System** built with **Node.js**, **Express**,
 ## Project Structure
 
 The main project files and directories are structured as follows:
-
+```bash
+feedbackSystem
+│---.gitignore
+│---package-lock.json
+│---package.json
+│---README.md
+│---server.js
+└───public
+    │---app.js
+    │---index.html
+    │---style.css
+    │
+    └───images
+        └───{Images Files}
+```
 
 ---
 
