@@ -15,12 +15,14 @@ app.use(`/feedback`, express.static(path.join(__dirname, 'public')));
 // Route to handle the form submission (POST request)
 app.post('/submit-rating', (req, res) => {
     const rating = req.body.rating;
+    const comment = req.body.comment;
     
     // Log the received rating to the console
     console.log(`Received rating: ${rating}`);
+    console.log(`Received comment: ${comment}`);
 
     // Send a response back to the client
-    res.json({ message: `Received rating: ${rating}` });
+    res.json({ message: `Received rating: ${rating}\nReceived comment: ${comment}` });
 });
 
 // 404 handler: keep this at the end, so it only catches requests that don’t match any defined routes
@@ -31,6 +33,6 @@ app.use((req, res) => {
 
 // Start server
 app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
+    console.log(`Server is running on http://localhost:${PORT}/feedback`);
 });
 

@@ -6,6 +6,7 @@ const finishForm = document.querySelector('.feedback-respond');
 const feedbackComment = document.querySelector('.feedback-comment');
 
 let selectedRating = '';
+let comment = "";
 
 document.addEventListener('DOMContentLoaded', function() {
   ratings.forEach((rating) => {
@@ -41,20 +42,25 @@ document.addEventListener('DOMContentLoaded', function() {
         finishForm.style.visibility = 'hidden';
       }, 5000);
       
+      comment = feedbackComment.value;
       
       // console.log(selectedRating);
 
-      // Send the selected rating to the server
+      // Send the selected rating and comment to the server
       fetch('/submit-rating', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ rating: selectedRating })
+        body: JSON.stringify({ 
+            rating: selectedRating, 
+            comment: comment
+          })
       })
       .then(response => response.json())
       .then(data => {
-        console.log(data.message); // Handle server response
+        console.log(data.message); //print in the console
+        // Handle server response 
       })
       .catch(error => console.error('Error:', error));
 
@@ -67,5 +73,8 @@ document.addEventListener('DOMContentLoaded', function() {
 // Reset all inputs and ratings
 function reset() {
   selectedRating = '';
+  comment = '';
+  feedbackComment.value = '';
+  feedbackComment.style.display = 'none';
   ratings.forEach((img) => img.style.filter = 'grayscale(100%)');
 }
