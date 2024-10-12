@@ -1,5 +1,5 @@
 // To run: type 'npm start' in the command or terminal
-// Go to http://localhost:3000/ || {host}/feedback
+// Go to http://localhost:3000/ || {host}
 
 const { networkInterfaces } = require('os');
 const express = require('express');

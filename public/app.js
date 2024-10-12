@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', function() {
       
       // console.log(selectedRating);
 
-      // Send the selected rating and comment to the server
+      // Send the data to the server
       fetch('/submit-rating', {
         method: 'POST',
         headers: {
