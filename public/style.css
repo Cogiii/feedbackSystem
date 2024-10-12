@@ -1,0 +1,147 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Kadwa';
+}
+
+body {
+    display: flex; 
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.container {
+    width: 700px;
+    height: auto;
+    border-radius: 20px;
+    padding: 20px;
+    font-size: larger;
+    text-align: center;
+    box-shadow: 0 20px 50px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.feedback-form {
+    /* display: none; */
+    transition: opacity 1s ease;
+}
+
+.feedback-ratings {
+    margin-top: 25px;
+    display: flex;
+    justify-content: center;
+}
+
+.rating {
+    text-align: center;
+    padding: 0 20px;
+}
+
+.rating img {
+    display: block;
+    margin: 0 auto;
+    width: 150px;
+    filter: grayscale(100%);
+}
+
+.rating img:hover {
+    filter: none;
+    cursor:pointer;
+}
+
+.rating small {
+    display: block;
+    font-size: large;
+}
+
+.submit-btn {
+    width: 150px;
+    background-color: black;
+    color: white;
+    border-radius: 10px;
+    font-size: large;
+    margin: 25px;
+    cursor: pointer;
+}
+.submit-btn:hover {
+    background-color: rgb(28, 28, 28);
+}
+
+.feedback-respond {
+    font-size: larger;  
+    text-align: center;
+    position: absolute;
+    width: 600px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    transition: opacity 1s ease;
+    opacity: 0;
+    visibility: hidden;
+}
+
+@media only screen and (max-width: 900px) {
+    .container {
+        width: 80%;
+        font-size: large;
+    }
+    .feedback-respond {
+        width: 70%;
+    }
+
+    .rating img {
+        display: block;
+        margin: 0 auto;
+        width: 100px;
+        filter: grayscale(100%);
+    }
+    .rating small {
+        display: block;
+        font-size: small;
+    }
+}
+
+@media only screen and (max-width: 600px) {
+    .container {
+        font-size: small;
+    }
+
+    .rating img {
+        display: block;
+        margin: 0 auto;
+        width: 70px;
+        filter: grayscale(100%);
+    }
+    .rating small {
+        display: block;
+        font-size: small;
+    }
+
+    .submit-btn {
+        width: 120px;
+        font-size: small
+    }
+}
+@media only screen and (max-width: 400px) {
+    .container {
+        font-size: x-small;
+    }
+
+    .rating img {
+        display: block;
+        margin: 0 auto;
+        width: 40px;
+        filter: grayscale(100%);
+    }
+    .rating small {
+        display: block;
+        font-size:xx-small;
+    }
+
+    .submit-btn {
+        width: 100px;
+        font-size: x-small
+    }
+}
+
