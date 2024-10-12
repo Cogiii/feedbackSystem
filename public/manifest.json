@@ -1,0 +1,8 @@
+{
+  "short_name": "MMCM Library Feedback",
+  "name": "MMCM Library Feedback",
+  "start_url": ".",
+  "display": "fullscreen",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}
