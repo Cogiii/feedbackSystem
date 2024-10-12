@@ -1,11 +1,12 @@
 // To run: type 'npm start' in the command or terminal
 // Go to http://localhost:3000/ || {host}/feedback
 
+const { networkInterfaces } = require('os');
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
 const sqlite3 = require('sqlite3').verbose();
-
+const { body, validationResult } = require('express-validator');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -32,22 +33,24 @@ db.run(createFeedbackTableSql, function (err) {
     console.log('Table created successfully');
 });
 
-
-
 app.use(bodyParser.json());
-app.use(`/`, express.static(path.join(__dirname, 'public')));
+app.use(`/`, express.static('./public/'));
 
 // Route to handle the form submission (POST request)
-app.post('/submit-rating', (req, res) => {
+app.post('/submit-rating', body('comment').trim().escape(), (req, res) => {
     const rating = req.body.rating;
     const comment = req.body.comment;
+    const result = validationResult(req);
+    if (!result.isEmpty()) {
+      return res.send({ errors: result.array() });
+    }
 
     // Log the received rating to the console
     console.log(`Received rating: ${rating}`);
     console.log(`Received comment: ${comment}`);
     var date = new Date().toISOString();
 
-    let sql = 'INSERT INTO Feedback(rating, comment, date) VALUES(\''+rating+'\', \''+comment+'\', \''+date+'\')';
+    let sql = `INSERT INTO Feedback(rating, comment, date) VALUES('${rating}', '${comment}', '${date.split('T')[0]}')`;
     console.log(sql);
 
     db.run(sql, function (err) {
@@ -74,12 +77,7 @@ app.get('/getfeedbacks', async (req, res) => {
             let string = `${row.rating}, ${row.comment}, ${row.date}`;
             stri.push(string);
         });
-
-        console.log(stri);
-        const csvData = stri.join('\n');
-        res.header('Content-Type', 'text/csv');
-        res.header('Content-Disposition', 'attachment; filename="feedbacks.csv"');
-        res.send(csvData);
+        res.send(`<p>${stri.join("<br>")}</p>`);
     });
 });
 
@@ -91,6 +89,15 @@ app.use((req, res) => {
 
 // Start server
 app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}/`);
+    console.log("Server is running on these interfaces:");
+    const nets = networkInterfaces();
+    for (const name of Object.keys(nets)) {
+        for (const net of nets[name]) {
+            const familyV4Value = typeof net.family === 'string' ? 'IPv4' : 4
+            if (net.family === familyV4Value && !net.internal) {
+                console.log(`${name}: http://${net.address}:${PORT}/`);
+            }
+        }
+    }
+    console.log("");
 });
-
