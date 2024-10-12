@@ -136,6 +136,7 @@ body {
     100% { transform: translate(1px, -2px) rotate(-1deg); }
 }
 
+
 @media only screen and (max-width: 900px) {
     .container {
         width: 80%;
