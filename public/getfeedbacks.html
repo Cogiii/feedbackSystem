@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <title>Feedback Statistics</title>
+</head>
+<body class="stats">
+
+    <div class="filter">
+        <label for="start-date" class="start-date">Start Date:</label>
+        <input type="date" id="start-date" class="datepicker-input start-date" name="start-date">
+        <label for="end-date" class="end-date">End Date:</label>
+        <input type="date" id="end-date" class="datepicker-input start-date" name="end-date">
+
+        <button class="download" onclick="">Download CSV</button>
+    </div>
+
+    <div class="charts">
+        <div class="evaluators-chart">
+            <canvas id="evaluators-chart"></canvas>
+        </div>
+        <div class="ratings-chart">
+            <canvas id="ratings-chart"></canvas>
+        </div>
+    </div>
+
+    <div class="comments-section">
+        <strong>Feedback Comments</strong>
+
+
+        <table>
+            <tr>
+                <th>Evaluator</th>
+                <th>Comment</th>
+            </tr>
+            <tr>
+                <td>Student</td>
+                <td>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Magnam odit ea facere similique, accusantium, cumque, delectus beatae repellat dicta voluptatem vero quos repudiandae quaerat mollitia rem praesentium. Fugiat, error quas.</td>
+            </tr>
+            <tr>
+                <td>Employee</td>
+                <td>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Magnam odit ea facere similique, accusantium, cumque, delectus beatae repellat dicta voluptatem vero quos repudiandae quaerat mollitia rem praesentium. Fugiat, error quas.</td>
+            </tr>
+            <tr>
+                <td>Employee</td>
+                <td>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Magnam odit ea facere similique, accusantium, cumque, delectus beatae repellat dicta voluptatem vero quos repudiandae quaerat mollitia rem praesentium. Fugiat, error quas.</td>
+            </tr>
+        </table>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+    <script src="statistics.js"></script>
+</body>
+</html>

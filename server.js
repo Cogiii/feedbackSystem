@@ -68,20 +68,23 @@ app.post('/submit-rating', body('comment').trim().escape(), (req, res) => {
 });
 
 app.get('/getfeedbacks', async (req, res) => {
-    let sql = `SELECT * FROM Feedback`;
-    var stri = new Array();
-    stri.push("id, user, rating, comment, date");
+    // let sql = `SELECT * FROM Feedback`;
+    // var stri = new Array();
+    // stri.push("id, user, rating, comment, date");
 
-    db.all(sql, [], (err, rows) => {
-        if (err) {
-            throw err;
-        }
-        rows.forEach((row) => {
-            let string = `${row.id}, ${row.user}, ${row.rating}, ${row.comment}, ${row.date}`;
-            stri.push(string);
-        });
-        res.send(`<p>${stri.join("<br>")}</p>`);
-    });
+    // db.all(sql, [], (err, rows) => {
+    //     if (err) {
+    //         throw err;
+    //     }
+    //     rows.forEach((row) => {
+    //         let string = `${row.id}, ${row.user}, ${row.rating}, ${row.comment}, ${row.date}`;
+    //         stri.push(string);
+    //     });
+    //     res.send(`<p>${stri.join("<br>")}</p>`);
+    // });
+
+    
+    res.sendFile(path.join(__dirname, 'public', 'getfeedbacks.html'));
 });
 
 // 404 handler: keep this at the end, so it only catches requests that don’t match any defined routes
