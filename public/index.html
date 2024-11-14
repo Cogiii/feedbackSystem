@@ -15,38 +15,43 @@
 </head>
 <body>
     
-    <div class="container">
-        <div class="feedback-form">
-                <strong>How satisfied are you with your experience? We would love to hear your thoughts!</strong>
-        
-                <div class="feedback-ratings">
-                    <div class="rating">
-                        <img src="images/bad.png" id="bad-rating" name="Bad">
-                        <small>Bad</small>
+    <div class="content-wrapper">
+        <div class="container">
+            <div class="feedback-form">
+                    <strong>How satisfied are you with your experience? We would love to hear your thoughts!</strong>
+            
+                    <div class="feedback-ratings">
+                        <div class="rating">
+                            <img src="images/bad.png" id="bad-rating" name="Bad">
+                            <small>Bad</small>
+                        </div>
+            
+                        <div class="rating">
+                            <img src="images/average.png" id="average-rating" name="Average">
+                            <small>Average</small>
+                        </div>
+            
+                        <div class="rating">
+                            <img src="images/smile.png" id="good-rating" name="Good">
+                            <small>Good</small>
+                        </div>
                     </div>
-        
-                    <div class="rating">
-                        <img src="images/average.png" id="average-rating" name="Average">
-                        <small>Average</small>
-                    </div>
-        
-                    <div class="rating">
-                        <img src="images/smile.png" id="good-rating" name="Good">
-                        <small>Good</small>
-                    </div>
-                </div>
-
-                <textarea name="feedback-comment" placeholder="What do you want to say?" class="feedback-comment"></textarea>
-        
-                <button class="user-btn" id="employee-btn" onclick="chooseUser('employee')">Employee</button>
-                <button class="user-btn" id="student-btn" onclick="chooseUser('student')">Student</button>
-
-                <button type="button" class="submit-btn">Submit</button>
+    
+                    <textarea name="feedback-comment" placeholder="What do you want to say?" class="feedback-comment"></textarea>
+            
+                    <button class="user-btn" id="employee-btn" onclick="chooseUser('employee')">Employee</button>
+                    <button class="user-btn" id="student-btn" onclick="chooseUser('student')">Student</button>
+    
+                    <button type="button" class="submit-btn">Submit</button>
+            </div>
+    
+            <div class="feedback-respond">
+                <strong>🌟 Thank you for sharing your feedback! Your thoughts mean the world to us! 💖 We truly appreciate your input and are always striving to improve. 🚀✨</strong>
+                
+                <!-- <strong>📣 Thank you for your valuable feedback! 🌟 We’re thrilled to hear your thoughts and appreciate you helping us grow! Every suggestion makes our library experience better, and we're excited to keep improving with your input. 💪✨</strong> -->
+            </div>
         </div>
-
-        <div class="feedback-respond">
-            <strong>🌟 Thank you for sharing your feedback! Your thoughts mean the world to us! 💖 We truly appreciate your input and are always striving to improve. 🚀✨</strong>
-        </div>
+        <p class="author">Developed by: Keian and Kharl</p>
     </div>
 
     <script src="app.js"></script>

@@ -69,7 +69,9 @@ document.addEventListener('DOMContentLoaded', function() {
       })
       .catch(error => console.error('Error:', error));
 
-      reset();
+      setTimeout(() => {
+        reset()
+      }, 4000);
     } else {
       if(selectedRating == '') {
         feedbackRatings.classList.add('shake-fields');
@@ -110,7 +112,7 @@ function reset() {
   selectedUser = '';
   feedbackComment.value = '';
   feedbackComment.style.display = 'none';
-  ratings.forEach((img) => img.style.filter = 'grayscale(100%)');
+  ratings.forEach((img) => img.style.filter = 'none');
   studentBtn.classList.remove('user-active');
   employeeBtn.classList.remove('user-active');
 }
