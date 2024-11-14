@@ -68,10 +68,19 @@ app.post('/submit-rating', body('comment').trim().escape(), (req, res) => {
 });
 
 app.get('/getfeedbacks', async (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'getfeedbacks.html'));
+    // Check if the 'Accept' header is set to 'application/json'
+    const isJsonRequested = req.get('Content-Type') === 'application/json';
+
+    // If JSON is requested, handle the JSON response
+    if (isJsonRequested) {
+        return getFeedbackStats(res);
+    }
+
+    // If JSON is not requested, send the HTML page
+    return res.sendFile(path.join(__dirname, 'public', 'getfeedbacks.html'));
 });
 
-app.get('/getstats', async (req, res) => {
+async function getFeedbackStats(res) {
     const getRows = () => {
         return new Promise((resolve, reject) => {
             const sql = `SELECT * FROM Feedback`;
@@ -82,47 +91,58 @@ app.get('/getstats', async (req, res) => {
         });
     };
 
-    const rows = await getRows();
+    try {
+        const rows = await getRows();
 
-    let badCount = 0;
-    let averageCount = 0;
-    let goodCount = 0;
-    let employeeFeedback = [];
-    let studentFeedback = [];
+        let badCount = 0;
+        let averageCount = 0;
+        let goodCount = 0;
+        let employeeFeedback = [];
+        let studentFeedback = [];
 
-    rows.forEach((row) => {
-        switch (row.rating) {
-            case 'Bad':
-                badCount++;
-                break;
-            case 'Average':
-                averageCount++;
-                break;
-            case 'Good':
-                goodCount++;
-                break;
-        }
+        rows.forEach((row) => {
+            switch (row.rating) {
+                case 'Bad':
+                    badCount++;
+                    break;
+                case 'Average':
+                    averageCount++;
+                    break;
+                case 'Good':
+                    goodCount++;
+                    break;
+            }
 
-        const feedbackItem = {
-            rating: row.rating,
-            comment: row.comment
-        };
+            const feedbackItem = {
+                rating: row.rating,
+                comment: row.comment
+            };
 
-        if (row.user === 'student') {
-            studentFeedback.push(feedbackItem);
-        } else if (row.user === 'employee') {
-            employeeFeedback.push(feedbackItem);
-        }
-    });
+            if (row.user === 'student') {
+                studentFeedback.push(feedbackItem);
+            } else if (row.user === 'employee') {
+                employeeFeedback.push(feedbackItem);
+            }
+        });
 
-    res.json({
-        employee_feedback: employeeFeedback,
-        student_feedback: studentFeedback,
-        bad_count: badCount,
-        average_count: averageCount,
-        good_count: goodCount
-    });
-});
+        // Set Content-Type to 'application/json' for JSON response
+        res.setHeader('Content-Type', 'application/json');
+
+        // Send JSON response
+        res.json({
+            employee_feedback: employeeFeedback,
+            student_feedback: studentFeedback,
+            bad_count: badCount,
+            average_count: averageCount,
+            good_count: goodCount
+        });
+    } catch (err) {
+        // Set Content-Type to 'application/json' for error response
+        res.setHeader('Content-Type', 'application/json');
+        res.status(500).json({ error: 'An error occurred while fetching feedbacks.' });
+    }
+}
+
 
 // 404 handler: keep this at the end, so it only catches requests that don’t match any defined routes
 app.use((req, res) => {

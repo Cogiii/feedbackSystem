@@ -65,52 +65,57 @@ function updateFeedbackTable(data) {
 
 // Function to fetch and display feedback stats
 function getFeedbackStats() {
-    let url = '/getstats';
+    let url = '/getfeedbacks';
 
-    fetch(url)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            // Count users by type
-            const employeeCount = data.employee_feedback.length;
-            const studentCount = data.student_feedback.length;
-            const totalUsers = employeeCount + studentCount;
+    fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        // Count users by type
+        const employeeCount = data.employee_feedback.length;
+        const studentCount = data.student_feedback.length;
+        const totalUsers = employeeCount + studentCount;
 
-            // Create Evaluators Chart
-            const evaluatorsLabels = ["Employee", "Student"];
-            const evaluatorsData = [employeeCount, studentCount, 0, totalUsers];
-            const evaluatorsColors = ["red", "blue"];
-            createChart("evaluators-chart", "bar", evaluatorsLabels, evaluatorsData, evaluatorsColors, "Evaluators (Users)");
+        // Create Evaluators Chart
+        const evaluatorsLabels = ["Employee", "Student"];
+        const evaluatorsData = [employeeCount, studentCount, 0, totalUsers];
+        const evaluatorsColors = ["red", "blue"];
+        createChart("evaluators-chart", "bar", evaluatorsLabels, evaluatorsData, evaluatorsColors, "Evaluators (Users)");
 
-            // Create Ratings Chart
-            const ratingsLabels = ["Bad", "Average", "Good"];
-            const ratingsData = [data.bad_count, data.average_count, data.good_count];
+        // Create Ratings Chart
+        const ratingsLabels = ["Bad", "Average", "Good"];
+        const ratingsData = [data.bad_count, data.average_count, data.good_count];
 
-            // Calculate percentages
-            const totalRatings = ratingsData.reduce((a, b) => a + b, 0);
-            const ratingsPercentages = ratingsData.map(value => 
-                ((value / totalRatings) * 100).toFixed(2)
-            );
+        // Calculate percentages
+        const totalRatings = ratingsData.reduce((a, b) => a + b, 0);
+        const ratingsPercentages = ratingsData.map(value => 
+            ((value / totalRatings) * 100).toFixed(2)
+        );
 
-            // Create labels with percentages
-            const ratingsLabelsWithPercentages = ratingsLabels.map((label, index) => 
-                `${label} (${ratingsPercentages[index]}%)`
-            );
+        // Create labels with percentages
+        const ratingsLabelsWithPercentages = ratingsLabels.map((label, index) => 
+            `${label} (${ratingsPercentages[index]}%)`
+        );
 
-            const ratingsColors = ["#b91d47", "#00aba9", "#2b5797"];
-            createChart("ratings-chart", "pie", ratingsLabelsWithPercentages, ratingsData, ratingsColors, "Ratings");
+        const ratingsColors = ["#b91d47", "#00aba9", "#2b5797"];
+        createChart("ratings-chart", "pie", ratingsLabelsWithPercentages, ratingsData, ratingsColors, "Ratings");
 
-            // Update the feedback table
-            updateFeedbackTable(data);
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Failed to load feedback data');
-        });
+        // Update the feedback table
+        updateFeedbackTable(data);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Failed to load feedback data');
+    });
 }
 
 document.addEventListener('DOMContentLoaded', function() {
