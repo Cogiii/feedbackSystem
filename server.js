@@ -68,23 +68,60 @@ app.post('/submit-rating', body('comment').trim().escape(), (req, res) => {
 });
 
 app.get('/getfeedbacks', async (req, res) => {
-    // let sql = `SELECT * FROM Feedback`;
-    // var stri = new Array();
-    // stri.push("id, user, rating, comment, date");
-
-    // db.all(sql, [], (err, rows) => {
-    //     if (err) {
-    //         throw err;
-    //     }
-    //     rows.forEach((row) => {
-    //         let string = `${row.id}, ${row.user}, ${row.rating}, ${row.comment}, ${row.date}`;
-    //         stri.push(string);
-    //     });
-    //     res.send(`<p>${stri.join("<br>")}</p>`);
-    // });
-
-    
     res.sendFile(path.join(__dirname, 'public', 'getfeedbacks.html'));
+});
+
+app.get('/getstats', async (req, res) => {
+    const getRows = () => {
+        return new Promise((resolve, reject) => {
+            const sql = `SELECT * FROM Feedback`;
+            db.all(sql, [], (err, rows) => {
+                if (err) reject(err);
+                resolve(rows);
+            });
+        });
+    };
+
+    const rows = await getRows();
+
+    let badCount = 0;
+    let averageCount = 0;
+    let goodCount = 0;
+    let employeeFeedback = [];
+    let studentFeedback = [];
+
+    rows.forEach((row) => {
+        switch (row.rating) {
+            case 'Bad':
+                badCount++;
+                break;
+            case 'Average':
+                averageCount++;
+                break;
+            case 'Good':
+                goodCount++;
+                break;
+        }
+
+        const feedbackItem = {
+            rating: row.rating,
+            comment: row.comment
+        };
+
+        if (row.user === 'student') {
+            studentFeedback.push(feedbackItem);
+        } else if (row.user === 'employee') {
+            employeeFeedback.push(feedbackItem);
+        }
+    });
+
+    res.json({
+        employee_feedback: employeeFeedback,
+        student_feedback: studentFeedback,
+        bad_count: badCount,
+        average_count: averageCount,
+        good_count: goodCount
+    });
 });
 
 // 404 handler: keep this at the end, so it only catches requests that don’t match any defined routes
