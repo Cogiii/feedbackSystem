@@ -34,56 +34,17 @@ db.run(createFeedbackTableSql, function (err) {
     console.log('Table created successfully');
 });
 
-app.use(bodyParser.json());
-app.use(`/`, express.static('./public/'));
-
-// Route to handle the form submission (POST request)
-app.post('/submit-rating', body('comment').trim().escape(), (req, res) => {
-    const rating = req.body.rating;
-    const comment = req.body.comment;
-    const user = req.body.user;
-    const result = validationResult(req);
-    if (!result.isEmpty()) {
-      return res.send({ errors: result.array() });
-    }
-
-    // Log the received rating to the console
-    console.log(`Received rating: ${rating}`);
-    console.log(`Received comment: ${comment}`);
-    console.log(`Received user: ${user}`);
-    var date = new Date().toISOString();
-
-    let sql = `INSERT INTO Feedback(user, rating, comment, date) VALUES('${user}', '${rating}', '${comment}', '${date.split('T')[0]}')`;
-    console.log(sql);
-
-    db.run(sql, function (err) {
-        if (err) {
-            return console.error('Error inserting feedback:', err.message);
-        }
-        console.log('Feedback inserted successfully');
-    });
-
-    // Send a response back to the client
-    res.json({ message: `Received rating: ${rating}\nReceived comment: ${comment}` });
-});
-
-app.get('/getfeedbacks', async (req, res) => {
-    // Check if the 'Accept' header is set to 'application/json'
-    const isJsonRequested = req.get('Content-Type') === 'application/json';
-
-    // If JSON is requested, handle the JSON response
-    if (isJsonRequested) {
-        return getFeedbackStats(res);
-    }
-
-    // If JSON is not requested, send the HTML page
-    return res.sendFile(path.join(__dirname, 'public', 'getfeedbacks.html'));
-});
-
-async function getFeedbackStats(res) {
+async function getFeedbackStats(req, res) {
     const getRows = () => {
         return new Promise((resolve, reject) => {
-            const sql = `SELECT * FROM Feedback`;
+            let sql = `SELECT user,rating,comment,date FROM Feedback`;
+
+            if (req.query.start && req.query.end) {
+                sql += ` WHERE date BETWEEN '${req.query.start}' AND '${req.query.end}'`
+            }
+
+            console.log(sql)
+
             db.all(sql, [], (err, rows) => {
                 if (err) reject(err);
                 resolve(rows);
@@ -143,6 +104,75 @@ async function getFeedbackStats(res) {
     }
 }
 
+app.use(bodyParser.json());
+app.use(`/`, express.static('./public/'));
+
+// Route to handle the form submission (POST request)
+app.post('/submit-rating', body('comment').trim().escape(), (req, res) => {
+    const rating = req.body.rating;
+    const comment = req.body.comment;
+    const user = req.body.user;
+    const result = validationResult(req);
+    if (!result.isEmpty()) {
+      return res.send({ errors: result.array() });
+    }
+
+    // Log the received rating to the console
+    console.log(`Received rating: ${rating}`);
+    console.log(`Received comment: ${comment}`);
+    console.log(`Received user: ${user}`);
+    var date = new Date().toISOString();
+
+    let sql = `INSERT INTO Feedback(user, rating, comment, date) VALUES('${user}', '${rating}', '${comment}', '${date.split('T')[0]}')`;
+    console.log(sql);
+
+    db.run(sql, function (err) {
+        if (err) {
+            return console.error('Error inserting feedback:', err.message);
+        }
+        console.log('Feedback inserted successfully');
+    });
+
+    // Send a response back to the client
+    res.json({ message: `Received rating: ${rating}\nReceived comment: ${comment}` });
+});
+
+app.get('/getfeedbacks', async (req, res) => {
+    // Check if the 'Accept' header is set to 'application/json'
+    const isJsonRequested = req.get('Content-Type') === 'application/json';
+
+    // If JSON is requested, handle the JSON response
+    if (isJsonRequested) {
+        return getFeedbackStats(req, res);
+    }
+
+    // If JSON is not requested, send the HTML page
+    return res.sendFile(path.join(__dirname, 'public', 'getfeedbacks.html'));
+});
+
+app.get('/download-csv', async (req, res) => {
+    let sql = `SELECT user,rating,comment,date FROM Feedback`;
+
+    if (req.query.start && req.query.end) {
+        sql += ` WHERE date BETWEEN '${req.query.start}' AND '${req.query.end}'`
+    }
+
+    var stri = new Array();
+    stri.push("user,rating,comment,date");
+    db.all(sql, [], (err, rows) => {
+        if (err) {
+            throw err;
+        }
+        rows.forEach((row) => {
+            let string = `${row.user}, ${row.rating}, \`${row.comment}\`, ${row.date}`;
+            stri.push(string);
+        });
+        const csvData = stri.join('\n');
+        res.header('Content-Type', 'text/csv');
+        res.header('Content-Disposition', 'attachment; filename="feedbacks.csv"');
+        res.send(csvData);
+    });
+});
 
 // 404 handler: keep this at the end, so it only catches requests that don’t match any defined routes
 app.use((req, res) => {

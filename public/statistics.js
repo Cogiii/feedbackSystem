@@ -65,7 +65,16 @@ function updateFeedbackTable(data) {
 
 // Function to fetch and display feedback stats
 function getFeedbackStats() {
+    const startDate = document.getElementById('start-date').value;
+    const endDate = document.getElementById('end-date').value;
+
     let url = '/getfeedbacks';
+
+    if (startDate && endDate) {
+        url += `?start=${startDate}&end=${endDate}`;
+    }
+
+    console.log(url)
 
     fetch(url, {
         method: 'GET',
@@ -118,6 +127,25 @@ function getFeedbackStats() {
     });
 }
 
+function downloadCSV() {
+    const startDate = document.getElementById('start-date').value;
+    const endDate = document.getElementById('end-date').value;
+
+    let url = '/download-csv';
+    if (startDate && endDate) {
+        url += `?start=${startDate}&end=${endDate}`;
+    }
+
+    window.location.href = url;
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     getFeedbackStats();
+
+    // Add date filter listeners
+    document.getElementById('start-date').addEventListener('change', getFeedbackStats);
+    document.getElementById('end-date').addEventListener('change', getFeedbackStats);
+
+    // Download csv button
+    document.querySelector('.download').addEventListener('click', downloadCSV);
 });
