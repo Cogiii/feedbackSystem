@@ -215,7 +215,9 @@ th, td, table {
     margin: 20px;
     padding: 10px;
 }
-
+.department-input {
+    width: 100px;
+}
   
 
 .content-wrapper {

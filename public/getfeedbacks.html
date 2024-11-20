@@ -21,6 +21,13 @@
         <label for="end-date" class="end-date">End Date:</label>
         <input type="date" id="end-date" class="datepicker-input start-date" name="end-date">
 
+        <label for="department-input" class="department-input">Department:</label>
+        <select name="deparment-input" id="deparment-input" class="department-input">
+            <option value="both">Both</option>
+            <option value="highschool">High School</option>
+            <option value="college">College</option>
+        </select>
+
         <button class="download" onclick="">Download CSV</button>
     </div>
 
@@ -37,9 +44,9 @@
         <strong>Feedback Comments</strong>
 
 
-        <table>
+        <table style="width: 100%;">
             <tr>
-                <th>Evaluator</th>
+                <th style="width: 10%;">Evaluator</th>
                 <th>Comment</th>
             </tr>
             <tr>
