@@ -85,6 +85,8 @@ async function getFeedbackStats(req, res) {
                 sql += ` AND department = 'college'`;
             }
 
+            sql += " ORDER BY id DESC";
+
             console.log(sql)
 
             db.all(sql, [], (err, rows) => {
