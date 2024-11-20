@@ -285,6 +285,19 @@ th, td, table {
     .author {
         font-size: small;
     }
+
+    .user-btn {
+        font-size: small;
+        width: 100px;
+    }
+}
+
+@media only screen and (max-width: 800px) {
+    .user-btn {
+        font-size: x-small;
+        width: 80px;
+    }
+    
 }
 
 @media only screen and (max-width: 600px) {
@@ -311,8 +324,8 @@ th, td, table {
         padding: 7px 12px;
     }
     .user-btn {
-        font-size: small;
-        width: 80px;
+        font-size: xx-small;
+        width: 70px;
     }
     .author {
         font-size: x-small;

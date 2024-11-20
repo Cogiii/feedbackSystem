@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', function() {
   });
   
   submitBtn.addEventListener('click', function() {
-    if (selectedRating !== '' && selectedUser !== '') {
+    if (selectedRating !== '' && selectedUser !== '' && selectedDepartment !== '') {
       feedbackForm.style.opacity = 0;
       finishForm.style.opacity = 1;
       finishForm.style.visibility = 'visible';
