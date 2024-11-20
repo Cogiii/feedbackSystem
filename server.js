@@ -44,6 +44,12 @@ async function getFeedbackStats(req, res) {
                 sql += ` WHERE date BETWEEN '${req.query.start}' AND '${req.query.end}'`
             }
 
+            if (req.query.department === 'highschool') {
+                sql += ` AND department = 'highschool'`;
+            } else if (req.query.department === 'college') {
+                sql += ` AND department = 'college'`;
+            }
+
             console.log(sql)
 
             db.all(sql, [], (err, rows) => {
@@ -59,7 +65,8 @@ async function getFeedbackStats(req, res) {
         let badCount = 0;
         let averageCount = 0;
         let goodCount = 0;
-        let feedbackItems = [];
+        let employeeFeedback = [];
+        let studentFeedback = [];
 
         rows.forEach((row) => {
             switch (row.rating) {
@@ -74,13 +81,16 @@ async function getFeedbackStats(req, res) {
                     break;
             }
 
-            feedbackItems.push({
-                user: row.user,
-                department: row.department,
+            const feedbackItem = {
                 rating: row.rating,
                 comment: row.comment
-            });
-            
+            };
+
+            if (row.user === 'student') {
+                studentFeedback.push(feedbackItem);
+            } else if (row.user === 'employee') {
+                employeeFeedback.push(feedbackItem);
+            }
         });
 
         // Set Content-Type to 'application/json' for JSON response
@@ -88,7 +98,8 @@ async function getFeedbackStats(req, res) {
 
         // Send JSON response
         res.json({
-            feedback_items: feedbackItems,
+            employee_feedback: employeeFeedback,
+            student_feedback: studentFeedback,
             bad_count: badCount,
             average_count: averageCount,
             good_count: goodCount

@@ -67,11 +67,12 @@ function updateFeedbackTable(data) {
 function getFeedbackStats() {
     const startDate = document.getElementById('start-date').value;
     const endDate = document.getElementById('end-date').value;
+    const department = document.getElementById('department-input').value;
 
-    let url = '/getfeedbacks';
+    let url = `/getfeedbacks?department=${department}`;
 
     if (startDate && endDate) {
-        url += `?start=${startDate}&end=${endDate}`;
+        url += `&start=${startDate}&end=${endDate}`;
     }
 
     console.log(url)
@@ -145,6 +146,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Add date filter listeners
     document.getElementById('start-date').addEventListener('change', getFeedbackStats);
     document.getElementById('end-date').addEventListener('change', getFeedbackStats);
+
+    // Add department listener
+    document.getElementById('department-input').addEventListener('change', getFeedbackStats);
 
     // Download csv button
     document.querySelector('.download').addEventListener('click', downloadCSV);
