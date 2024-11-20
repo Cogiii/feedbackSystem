@@ -147,7 +147,7 @@ async function getFeedbackStats(req, res) {
 }
 
 app.use(bodyParser.json());
-app.use(`/`, express.static('./public/'));
+app.use(`/`, express.static(path.join(__dirname, 'public/')));
 
 // Route to handle the form submission (POST request)
 app.post('/submit-rating', body('comment').trim().escape(), (req, res) => {
@@ -191,7 +191,7 @@ app.get('/getfeedbacks', async (req, res) => {
     }
 
     // If JSON is not requested, send the HTML page
-    return res.sendFile(path.join(__dirname, 'public', 'getfeedbacks.html'));
+    return res.sendFile(path.join(__dirname, 'public/getfeedbacks.html'));
 });
 
 app.get('/download-csv', async (req, res) => {
