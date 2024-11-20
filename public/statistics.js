@@ -131,10 +131,11 @@ function getFeedbackStats() {
 function downloadCSV() {
     const startDate = document.getElementById('start-date').value;
     const endDate = document.getElementById('end-date').value;
+    const department = document.getElementById('department-input').value;
 
-    let url = '/download-csv';
+    let url = `/download-csv?department=${department}`;
     if (startDate && endDate) {
-        url += `?start=${startDate}&end=${endDate}`;
+        url += `&start=${startDate}&end=${endDate}`;
     }
 
     window.location.href = url;

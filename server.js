@@ -166,6 +166,12 @@ app.get('/download-csv', async (req, res) => {
         sql += ` WHERE date BETWEEN '${req.query.start}' AND '${req.query.end}'`
     }
 
+    if (req.query.department === 'highschool') {
+        sql += ` AND department = 'highschool'`;
+    } else if (req.query.department === 'college') {
+        sql += ` AND department = 'college'`;
+    }
+
     var stri = new Array();
     stri.push("user,department,rating,comment,date");
     db.all(sql, [], (err, rows) => {
