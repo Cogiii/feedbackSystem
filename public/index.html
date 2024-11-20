@@ -39,14 +39,23 @@
     
                     <textarea name="feedback-comment" placeholder="What do you want to say?" class="feedback-comment"></textarea>
             
-                    <button class="user-btn" id="employee-btn" onclick="chooseUser('employee')">Employee</button>
-                    <button class="user-btn" id="student-btn" onclick="chooseUser('student')">Student</button>
+                    <div class="evaluators-button">
+                        <div>
+                            <button class="user-btn" id="employee-btn" onclick="chooseUser('employee')">Employee</button>
+                            <button class="user-btn" id="student-btn" onclick="chooseUser('student')">Student</button>
+                        </div>
+                        <div class="line"></div>
+                        <div>
+                            <button class="user-btn" id="highschool-btn" onclick="chooseDepartment('highschool')">High School</button>
+                            <button class="user-btn" id="college-btn" onclick="chooseDepartment('college')">College</button>
+                        </div>
+                    </div>
     
                     <button type="button" class="submit-btn">Submit</button>
             </div>
     
             <div class="feedback-respond">
-                <strong>🌟 Thank you for sharing your feedback! Your thoughts mean the world to us! 💖 We truly appreciate your input and are always striving to improve. 🚀✨</strong>
+                <strong>Thank you for sharing your feedback! Your thoughts mean the world to us! 💖 We truly appreciate your input and are always striving to improve. 💖</strong>
                 
                 <!-- <strong>📣 Thank you for your valuable feedback! 🌟 We’re thrilled to hear your thoughts and appreciate you helping us grow! Every suggestion makes our library experience better, and we're excited to keep improving with your input. 💪✨</strong> -->
             </div>

@@ -7,10 +7,13 @@ const finishForm = document.querySelector('.feedback-respond');
 const feedbackComment = document.querySelector('.feedback-comment');
 const employeeBtn = document.getElementById('employee-btn');
 const studentBtn = document.getElementById('student-btn');
+const highschoolBtn = document.getElementById('highschool-btn');
+const collegeBtn = document.getElementById('college-btn');
 
 let selectedRating = '';
 let comment = "";
 let selectedUser = "";
+let selectedDepartment = "";
 
 document.addEventListener('DOMContentLoaded', function() {
   ratings.forEach((rating) => {
@@ -59,7 +62,8 @@ document.addEventListener('DOMContentLoaded', function() {
         body: JSON.stringify({ 
             rating: selectedRating, 
             comment: comment,
-            user: selectedUser
+            user: selectedUser,
+            department: selectedDepartment
           })
       })
       .then(response => response.json())
@@ -104,15 +108,29 @@ function chooseUser(user) {
     selectedUser = "student";
   }
 }
+function chooseDepartment(dept) {
+  if (dept == "highschool") {
+    collegeBtn.classList.remove('user-active');
+    highschoolBtn.classList.add('user-active');
+    selectedDepartment = "highschool";
+  } else if (dept == "college") {
+    collegeBtn.classList.add('user-active');
+    highschoolBtn.classList.remove('user-active');
+    selectedDepartment = "college";
+  }
+}
 
 // Reset all inputs and ratings
 function reset() {
   selectedRating = '';
   comment = '';
   selectedUser = '';
+  selectedDepartment = '';
   feedbackComment.value = '';
   feedbackComment.style.display = 'none';
   ratings.forEach((img) => img.style.filter = 'none');
   studentBtn.classList.remove('user-active');
   employeeBtn.classList.remove('user-active');
+  highschoolBtn.classList.remove('user-active');
+  collegeBtn.classList.remove('user-active');
 }
