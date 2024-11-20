@@ -48,7 +48,7 @@ function updateFeedbackTable(data) {
             const userCell = row.insertCell(0);
             const commentCell = row.insertCell(1);
             userCell.textContent = 'Employee';
-            commentCell.textContent = feedback.comment;
+            commentCell.innerHTML = feedback.comment;
         }
     });
 
@@ -58,7 +58,7 @@ function updateFeedbackTable(data) {
             const userCell = row.insertCell(0);
             const commentCell = row.insertCell(1);
             userCell.textContent = 'Student';
-            commentCell.textContent = feedback.comment;
+            commentCell.innerHTML = feedback.comment;
         }
     });
 }

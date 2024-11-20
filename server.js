@@ -35,6 +35,41 @@ db.run(createFeedbackTableSql, function (err) {
     console.log('Table created successfully');
 });
 
+function unescapeHTML(str) {
+    const htmlEntities = {
+        nbsp: ' ',
+        cent: '¢',
+        pound: '£',
+        yen: '¥',
+        euro: '€',
+        copy: '©',
+        reg: '®',
+        lt: '<',
+        gt: '>',
+        quot: '"',
+        amp: '&',
+        apos: '\''
+    };
+
+    str = str.replace(/\&([^;]+);/g, function (entity, entityCode) {
+        var match;
+
+        if (entityCode in htmlEntities) {
+            return htmlEntities[entityCode];
+            /*eslint no-cond-assign: 0*/
+        } else if (match = entityCode.match(/^#x([\da-fA-F]+)$/)) {
+            return String.fromCharCode(parseInt(match[1], 16));
+            /*eslint no-cond-assign: 0*/
+        } else if (match = entityCode.match(/^#(\d+)$/)) {
+            return String.fromCharCode(~~match[1]);
+        } else {
+            return entity;
+        }
+    });
+
+    return str.replace(/,/g, '[comma]');
+};
+
 async function getFeedbackStats(req, res) {
     const getRows = () => {
         return new Promise((resolve, reject) => {
@@ -179,7 +214,7 @@ app.get('/download-csv', async (req, res) => {
             throw err;
         }
         rows.forEach((row) => {
-            let string = `${row.user}, ${row.department}, ${row.rating}, \`${row.comment}\`, ${row.date}`;
+            let string = `${row.user}, ${row.department}, ${row.rating}, ${unescapeHTML(row.comment)}, ${row.date}`;
             stri.push(string);
         });
         const csvData = stri.join('\n');
