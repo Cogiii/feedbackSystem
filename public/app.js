@@ -38,17 +38,6 @@ document.addEventListener('DOMContentLoaded', function() {
   
   submitBtn.addEventListener('click', function() {
     if (selectedRating !== '' && selectedUser !== '' && selectedDepartment !== '') {
-      feedbackForm.style.opacity = 0;
-      finishForm.style.opacity = 1;
-      finishForm.style.visibility = 'visible';
-
-      // After 5 seconds, go back to feedback form
-      setTimeout(() => {
-        feedbackForm.style.opacity = 1;
-        finishForm.style.opacity = 0;
-        finishForm.style.visibility = 'hidden';
-      }, 5000);
-      
       comment = feedbackComment.value;
       
       // console.log(selectedRating);
@@ -69,9 +58,22 @@ document.addEventListener('DOMContentLoaded', function() {
       .then(response => response.json())
       .then(data => {
         console.log(data.message);
-        // Handle server response 
+
+        feedbackForm.style.opacity = 0;
+        finishForm.style.opacity = 1;
+        finishForm.style.visibility = 'visible';
+
+        // After 5 seconds, go back to feedback form
+        setTimeout(() => {
+          feedbackForm.style.opacity = 1;
+          finishForm.style.opacity = 0;
+          finishForm.style.visibility = 'hidden';
+        }, 5000);
       })
-      .catch(error => console.error('Error:', error));
+      .catch(error => {
+        console.error('Error:', error)
+        alert(`Error: ${error}`)
+      });
 
       setTimeout(() => {
         reset()
