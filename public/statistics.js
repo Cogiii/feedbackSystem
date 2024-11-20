@@ -10,9 +10,19 @@ function setTodayDate() {
 
 setTodayDate();
 
+const chartInstances = new Map();
+
 // Function to create a chart
 function createChart(chartId, chartType, labels, dataValues, backgroundColors, title) {
-    new Chart(chartId, {
+    const canvas = document.getElementById(chartId);
+    
+    // Destroy existing chart if it exists
+    if (chartInstances.has(chartId)) {
+        chartInstances.get(chartId).destroy();
+    }
+
+    // Create new chart
+    const newChart = new Chart(canvas, {
         type: chartType,
         data: {
             labels: labels,
@@ -22,8 +32,8 @@ function createChart(chartId, chartType, labels, dataValues, backgroundColors, t
             }]
         },
         options: {
-            responsive: true, // Make the chart responsive
-            maintainAspectRatio: false, // Allow the height to change
+            responsive: true,
+            maintainAspectRatio: false,
             legend: { display: chartType === 'bar' ? false : true },
             title: {
                 display: true,
@@ -32,6 +42,11 @@ function createChart(chartId, chartType, labels, dataValues, backgroundColors, t
             }
         }
     });
+
+    // Store the chart instance
+    chartInstances.set(chartId, newChart);
+    
+    return newChart;
 }
 
 // Function to update table with feedback data
