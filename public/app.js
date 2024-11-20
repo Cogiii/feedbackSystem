@@ -62,12 +62,14 @@ document.addEventListener('DOMContentLoaded', function() {
         feedbackForm.style.opacity = 0;
         finishForm.style.opacity = 1;
         finishForm.style.visibility = 'visible';
+        submitBtn.disabled = true;
 
         // After 5 seconds, go back to feedback form
         setTimeout(() => {
           feedbackForm.style.opacity = 1;
           finishForm.style.opacity = 0;
           finishForm.style.visibility = 'hidden';
+          submitBtn.disabled = false;
         }, 5000);
       })
       .catch(error => {
