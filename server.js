@@ -22,6 +22,7 @@ const createFeedbackTableSql = `
     CREATE TABLE IF NOT EXISTS Feedback (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         user TEXT NOT NULL,
+        department TEXT NOT NULL,
         rating TEXT NOT NULL,
         comment TEXT,
         date TEXT NOT NULL
@@ -37,7 +38,7 @@ db.run(createFeedbackTableSql, function (err) {
 async function getFeedbackStats(req, res) {
     const getRows = () => {
         return new Promise((resolve, reject) => {
-            let sql = `SELECT user,rating,comment,date FROM Feedback`;
+            let sql = `SELECT user,department,rating,comment,date FROM Feedback`;
 
             if (req.query.start && req.query.end) {
                 sql += ` WHERE date BETWEEN '${req.query.start}' AND '${req.query.end}'`
@@ -58,8 +59,7 @@ async function getFeedbackStats(req, res) {
         let badCount = 0;
         let averageCount = 0;
         let goodCount = 0;
-        let employeeFeedback = [];
-        let studentFeedback = [];
+        let feedbackItems = [];
 
         rows.forEach((row) => {
             switch (row.rating) {
@@ -74,16 +74,13 @@ async function getFeedbackStats(req, res) {
                     break;
             }
 
-            const feedbackItem = {
+            feedbackItems.push({
+                user: row.user,
+                department: row.department,
                 rating: row.rating,
                 comment: row.comment
-            };
-
-            if (row.user === 'student') {
-                studentFeedback.push(feedbackItem);
-            } else if (row.user === 'employee') {
-                employeeFeedback.push(feedbackItem);
-            }
+            });
+            
         });
 
         // Set Content-Type to 'application/json' for JSON response
@@ -91,8 +88,7 @@ async function getFeedbackStats(req, res) {
 
         // Send JSON response
         res.json({
-            employee_feedback: employeeFeedback,
-            student_feedback: studentFeedback,
+            feedback_items: feedbackItems,
             bad_count: badCount,
             average_count: averageCount,
             good_count: goodCount
@@ -112,18 +108,20 @@ app.post('/submit-rating', body('comment').trim().escape(), (req, res) => {
     const rating = req.body.rating;
     const comment = req.body.comment;
     const user = req.body.user;
+    const department = req.body.department;
     const result = validationResult(req);
     if (!result.isEmpty()) {
       return res.send({ errors: result.array() });
     }
 
     // Log the received rating to the console
+    console.log(`Received user: ${user}`);
+    console.log(`Recieved department: ${department}`);
     console.log(`Received rating: ${rating}`);
     console.log(`Received comment: ${comment}`);
-    console.log(`Received user: ${user}`);
     var date = new Date().toISOString();
 
-    let sql = `INSERT INTO Feedback(user, rating, comment, date) VALUES('${user}', '${rating}', '${comment}', '${date.split('T')[0]}')`;
+    let sql = `INSERT INTO Feedback(user, department, rating, comment, date) VALUES('${user}', '${department}', '${rating}', '${comment}', '${date.split('T')[0]}')`;
     console.log(sql);
 
     db.run(sql, function (err) {
@@ -134,7 +132,7 @@ app.post('/submit-rating', body('comment').trim().escape(), (req, res) => {
     });
 
     // Send a response back to the client
-    res.json({ message: `Received rating: ${rating}\nReceived comment: ${comment}` });
+    res.json({ message: `Received user: ${user}\nRecieved department: ${department}\nReceived rating: ${rating}\nReceived comment: ${comment}` });
 });
 
 app.get('/getfeedbacks', async (req, res) => {
@@ -151,20 +149,20 @@ app.get('/getfeedbacks', async (req, res) => {
 });
 
 app.get('/download-csv', async (req, res) => {
-    let sql = `SELECT user,rating,comment,date FROM Feedback`;
+    let sql = `SELECT user,department,rating,comment,date FROM Feedback`;
 
     if (req.query.start && req.query.end) {
         sql += ` WHERE date BETWEEN '${req.query.start}' AND '${req.query.end}'`
     }
 
     var stri = new Array();
-    stri.push("user,rating,comment,date");
+    stri.push("user,department,rating,comment,date");
     db.all(sql, [], (err, rows) => {
         if (err) {
             throw err;
         }
         rows.forEach((row) => {
-            let string = `${row.user}, ${row.rating}, \`${row.comment}\`, ${row.date}`;
+            let string = `${row.user}, ${row.department}, ${row.rating}, \`${row.comment}\`, ${row.date}`;
             stri.push(string);
         });
         const csvData = stri.join('\n');
