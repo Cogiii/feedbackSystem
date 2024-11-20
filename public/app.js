@@ -85,11 +85,18 @@ document.addEventListener('DOMContentLoaded', function() {
         employeeBtn.classList.add('shake-fields');
       studentBtn.classList.add('shake-fields');
       }
+
+      if(selectedDepartment == '') {
+        highschoolBtn.classList.add('shake-fields');
+        collegeBtn.classList.add('shake-fields');
+      }
       
       setTimeout(() => {
         feedbackRatings.classList.remove('shake-fields');
         employeeBtn.classList.remove('shake-fields');
         studentBtn.classList.remove('shake-fields');
+        highschoolBtn.classList.remove('shake-fields');
+        collegeBtn.classList.remove('shake-fields');
       }, 1000);
       
     }
