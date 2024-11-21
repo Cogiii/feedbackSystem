@@ -1,6 +1,6 @@
 {
   "name": "mmcm-library-feedback-system",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "MMCM Feedback System",
   "main": "./server.js",
   "bin": "./server.js",

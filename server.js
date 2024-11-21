@@ -20,7 +20,7 @@ let db = new sqlite3.Database('./feedback.db', (err) => {
     if (err) {
         console.error(err.message);
     }
-    console.log('Connected to the feedback database.');
+    // console.log('Connected to the feedback database.');
 });
 
 const createFeedbackTableSql = `
@@ -37,7 +37,7 @@ db.run(createFeedbackTableSql, function (err) {
     if (err) {
         return console.error('Error creating table:', err.message);
     }
-    console.log('Table created successfully');
+    // console.log('Table created successfully');
 });
 
 function unescapeHTML(str) {
@@ -92,7 +92,7 @@ async function getFeedbackStats(req, res) {
 
             sql += " ORDER BY id DESC";
 
-            console.log(sql)
+            // console.log(sql)
 
             db.all(sql, [], (err, rows) => {
                 if (err) reject(err);
@@ -180,13 +180,13 @@ app.post('/submit-rating', body('comment').trim().escape(), (req, res) => {
     var date = new Date().toISOString();
 
     let sql = `INSERT INTO Feedback(user, department, rating, comment, date) VALUES('${user}', '${department}', '${rating}', '${comment}', '${date.split('T')[0]}')`;
-    console.log(sql);
+    // console.log(sql);
 
     db.run(sql, function (err) {
         if (err) {
             return console.error('Error inserting feedback:', err.message);
         }
-        console.log('Feedback inserted successfully');
+        // console.log('Feedback inserted successfully');
     });
 
     // Send a response back to the client

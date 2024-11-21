@@ -78,11 +78,21 @@ function getFeedbackStats() {
 
     let url = `/getfeedbacks?department=${department}`;
 
-    if (startDate && endDate) {
+    if (!startDate || !endDate) {
+        alert('Error: Both start and end dates must be provided.');
+        setTodayDate();
+    } else if (isNaN(Date.parse(startDate)) || isNaN(Date.parse(endDate))) {
+        alert('Error: Invalid date format. Please enter a valid date.');
+        setTodayDate();
+    } else if (new Date(startDate) > new Date(endDate)) {
+        alert('Error: Start date cannot be later than end date.');
+        setTodayDate();
+    } else {
         url += `&start=${startDate}&end=${endDate}`;
     }
+    
 
-    console.log(url)
+    // console.log(url)
 
     fetch(url, {
         method: 'GET',

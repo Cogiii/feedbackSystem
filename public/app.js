@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', function() {
       })
       .then(response => response.json())
       .then(data => {
-        console.log(data.message);
+        // console.log(data.message);
 
         feedbackForm.style.opacity = 0;
         finishForm.style.opacity = 1;
