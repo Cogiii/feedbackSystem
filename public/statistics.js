@@ -1,3 +1,5 @@
+const socket = io();
+
 // Function to set today's date as the default value
 function setTodayDate() {
     const today = new Date();
@@ -168,4 +170,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Download csv button
     document.querySelector('.download').addEventListener('click', downloadCSV);
+});
+
+socket.on('submit-rating', (arg) => {
+    getFeedbackStats();
 });

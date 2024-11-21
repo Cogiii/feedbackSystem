@@ -2,12 +2,17 @@
 // Go to http://localhost:3000/ || {host}/feedback
 
 const { networkInterfaces } = require('os');
+const { body, validationResult } = require('express-validator');
+const { Server } = require('socket.io');
+const { createServer } = require('node:http');
+
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
 const sqlite3 = require('sqlite3').verbose();
-const { body, validationResult } = require('express-validator');
 const app = express();
+const server = createServer(app);
+const io = new Server(server);
 const PORT = process.env.PORT || 3000;
 
 // database
@@ -163,10 +168,10 @@ app.post('/submit-rating', body('comment').trim().escape(), (req, res) => {
     }
 
     // Log the received rating to the console
-    console.log(`Received user: ${user}`);
-    console.log(`Recieved department: ${department}`);
-    console.log(`Received rating: ${rating}`);
-    console.log(`Received comment: ${comment}`);
+    // console.log(`Received user: ${user}`);
+    // console.log(`Recieved department: ${department}`);
+    // console.log(`Received rating: ${rating}`);
+    // console.log(`Received comment: ${comment}`);
     var date = new Date().toISOString();
 
     let sql = `INSERT INTO Feedback(user, department, rating, comment, date) VALUES('${user}', '${department}', '${rating}', '${comment}', '${date.split('T')[0]}')`;
@@ -194,6 +199,12 @@ app.get('/getfeedbacks', async (req, res) => {
 
     // If JSON is not requested, send the HTML page
     return res.sendFile(path.join(__dirname, 'public/getfeedbacks.html'));
+});
+
+io.on('connection', (socket) => {
+   socket.on('submit-rating', (arg) => {
+    io.emit('submit-rating', true);
+   });
 });
 
 app.get('/download-csv', async (req, res) => {
@@ -233,7 +244,7 @@ app.use((req, res) => {
 });
 
 // Start server
-app.listen(PORT, () => {
+server.listen(PORT, () => {
     console.log("Server is running on these interfaces:");
     const nets = networkInterfaces();
     for (const name of Object.keys(nets)) {

@@ -10,6 +10,8 @@ const studentBtn = document.getElementById('student-btn');
 const highschoolBtn = document.getElementById('highschool-btn');
 const collegeBtn = document.getElementById('college-btn');
 
+const socket = io();
+
 let selectedRating = '';
 let comment = "";
 let selectedUser = "";
@@ -71,6 +73,8 @@ document.addEventListener('DOMContentLoaded', function() {
           finishForm.style.visibility = 'hidden';
           submitBtn.disabled = false;
         }, 5000);
+        // Handle server response 
+        socket.emit('submit-rating', true);
       })
       .catch(error => {
         console.error('Error:', error)
