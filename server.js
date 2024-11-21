@@ -107,8 +107,9 @@ async function getFeedbackStats(req, res) {
         let badCount = 0;
         let averageCount = 0;
         let goodCount = 0;
-        let employeeFeedback = [];
-        let studentFeedback = [];
+        let employeeFeedbackCount = 0;
+        let studentFeedbackCount = 0;
+        let feedbackItems = [];
 
         rows.forEach((row) => {
             switch (row.rating) {
@@ -125,14 +126,17 @@ async function getFeedbackStats(req, res) {
 
             const feedbackItem = {
                 rating: row.rating,
-                comment: row.comment
+                comment: row.comment,
+                user: row.user
             };
 
-            if (row.user === 'student') {
-                studentFeedback.push(feedbackItem);
-            } else if (row.user === 'employee') {
-                employeeFeedback.push(feedbackItem);
+            if (row.user === "student") {
+                studentFeedbackCount += 1;
+            } else if (row.user === "employee") {
+                employeeFeedbackCount += 1;
             }
+
+            feedbackItems.push(feedbackItem)
         });
 
         // Set Content-Type to 'application/json' for JSON response
@@ -140,8 +144,9 @@ async function getFeedbackStats(req, res) {
 
         // Send JSON response
         res.json({
-            employee_feedback: employeeFeedback,
-            student_feedback: studentFeedback,
+            feedback_items: feedbackItems,
+            employee_feedback_count: employeeFeedbackCount,
+            student_feedback_count: studentFeedbackCount,
             bad_count: badCount,
             average_count: averageCount,
             good_count: goodCount

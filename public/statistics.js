@@ -59,22 +59,12 @@ function updateFeedbackTable(data) {
         table.deleteRow(1);
     }
 
-    data.employee_feedback.forEach(feedback => {
+    data.feedback_items.forEach(feedback => {
         if (feedback.comment && feedback.comment.trim() !== '') {
             const row = table.insertRow();
             const userCell = row.insertCell(0);
             const commentCell = row.insertCell(1);
-            userCell.textContent = 'Employee';
-            commentCell.innerHTML = feedback.comment;
-        }
-    });
-
-    data.student_feedback.forEach(feedback => {
-        if (feedback.comment && feedback.comment.trim() !== '') {
-            const row = table.insertRow();
-            const userCell = row.insertCell(0);
-            const commentCell = row.insertCell(1);
-            userCell.textContent = 'Student';
+            userCell.textContent = feedback.user.charAt(0).toUpperCase() + feedback.user.slice(1); // Capitalize first letter
             commentCell.innerHTML = feedback.comment;
         }
     });
@@ -108,8 +98,8 @@ function getFeedbackStats() {
     })
     .then(data => {
         // Count users by type
-        const employeeCount = data.employee_feedback.length;
-        const studentCount = data.student_feedback.length;
+        const employeeCount = data.employee_feedback_count;
+        const studentCount = data.student_feedback_count;
         const totalUsers = employeeCount + studentCount;
 
         // Create Evaluators Chart
