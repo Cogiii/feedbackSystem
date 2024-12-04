@@ -149,3 +149,39 @@ function reset() {
   highschoolBtn.classList.remove('user-active');
   collegeBtn.classList.remove('user-active');
 }
+
+// Function to update the time
+function updateTime() {
+  const now = new Date();
+  
+  // Get hours, minutes, seconds
+  let hours = now.getHours();
+  const minutes = String(now.getMinutes()).padStart(2, '0');
+  const seconds = String(now.getSeconds()).padStart(2, '0');
+  
+  const ampm = hours >= 12 ? 'PM' : 'AM';
+  
+  hours = hours % 12;
+  hours = hours ? String(hours).padStart(2, '0') : '12';
+  
+  const timeString = `${hours}:${minutes}:${seconds} ${ampm}`;
+  
+  const months = [
+    'January', 'February', 'March', 'April', 'May', 'June', 
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ];
+  
+  const month = months[now.getMonth()];
+  const day = String(now.getDate()).padStart(2, '0');
+  const year = now.getFullYear();
+  
+  const dateString = `${month} ${day}, ${year}`;
+  
+  document.querySelector('.time p').innerText = `${dateString} ${timeString}`;
+}
+
+
+
+updateTime();
+
+setInterval(updateTime, 1000);

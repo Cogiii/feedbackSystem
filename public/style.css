@@ -365,3 +365,25 @@ th, td, table {
 }
 
 
+.logo {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 200px;
+    margin: 10px;
+}
+
+.time {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    margin: 10px;
+}
+
+.time p {
+    font-family: 'Arial', sans-serif;
+    font-size: 1em;
+    font-weight: bold;
+    color: #000000;
+    margin: 0;
+}
