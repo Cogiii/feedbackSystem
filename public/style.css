@@ -218,12 +218,43 @@ th, td, table {
 .department-input {
     width: 100px;
 }
+
+div.chooseDepartment {
+    text-align: center;
+}
+div.chooseDepartment .btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0px;
+}
+.department-btn {
+    width: 250px;
+    height: 250px;
+    padding: 50px;
+    margin: 20px;
+    font-size: larger;
+    background: none;
+    font-weight: 500;
+}
+.department-btn:hover {
+    background-color: rgb(249, 32, 32);
+    cursor: pointer;
+}
   
 
 .content-wrapper {
     display: flex;
     flex-direction: column;
     align-items: center;
+    text-align: center;
+}
+.content-wrapper > p.dept {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-size: 1em;
+    margin-bottom: 20px;
 }
 
 .author {
@@ -236,9 +267,9 @@ th, td, table {
 }
 
 .evaluators-button {
-    display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
+    text-align: center;
     padding: 10px 20px;
 }
 .line {

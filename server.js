@@ -107,13 +107,18 @@ async function getFeedbackStats(req, res) {
         let badCount = 0;
         let averageCount = 0;
         let goodCount = 0;
-        let employeeFeedbackCount = 0;
+        let ntpFeedbackCount = 0;
+        let facultyFeedbackCount = 0;
         let studentFeedbackCount = 0;
+        let visitorFeedbackCount = 0;
         let feedbackItems = [];
 
         rows.forEach((row) => {
             switch (row.rating) {
                 case 'Bad':
+                    badCount++;
+                    break;
+                case 'Needs Improvement':
                     badCount++;
                     break;
                 case 'Average':
@@ -132,8 +137,12 @@ async function getFeedbackStats(req, res) {
 
             if (row.user === "student") {
                 studentFeedbackCount += 1;
-            } else if (row.user === "employee") {
-                employeeFeedbackCount += 1;
+            } else if (row.user === "ntp") {
+                ntpFeedbackCount += 1;
+            } else if (row.user === "faculty" || row.user === "employee") {
+                facultyFeedbackCount += 1;
+            } else if (row.user === "visitor") {
+                visitorFeedbackCount += 1;
             }
 
             feedbackItems.push(feedbackItem)
@@ -145,9 +154,11 @@ async function getFeedbackStats(req, res) {
         // Send JSON response
         res.json({
             feedback_items: feedbackItems,
-            employee_feedback_count: employeeFeedbackCount,
+            ntp_feedback_count: ntpFeedbackCount,
+            faculty_feedback_count: facultyFeedbackCount,
+            visitor_feedback_count: visitorFeedbackCount,
             student_feedback_count: studentFeedbackCount,
-            bad_count: badCount,
+            bad_count: badCount, // Needs Improvement or Bad
             average_count: averageCount,
             good_count: goodCount
         });

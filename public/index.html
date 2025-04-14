@@ -14,16 +14,34 @@
     <title>Feedback Form</title>
 </head>
 <body>
+
+    <div class="chooseDepartment">
+        <h1>Choose Department</h1>
+        <div class="btn">
+            <button class="department-btn" id="highschool-btn" onclick="chooseDepartment('highschool')">High School</button>
+            <button class="department-btn" id="college-btn" onclick="chooseDepartment('college')">College</button>
+        </div>
+    </div>
     
     <div class="content-wrapper">
+        <p class="dept">Department: 
+            <span >
+                <select name="department" id="department" onchange="chooseDepartment(this.value)">
+                    <option value="highschool">High School</option>
+                    <option value="college">College</option>
+                </select>
+            </span>
+        </p>
+
+        
         <div class="container">
             <div class="feedback-form">
                     <strong>How satisfied are you with your experience? We would love to hear your thoughts!</strong>
             
                     <div class="feedback-ratings">
                         <div class="rating">
-                            <img src="images/bad.png" id="bad-rating" name="Bad">
-                            <small>Bad</small>
+                            <img src="images/bad.png" id="needs-improvement-rating" name="Needs Improvement">
+                            <small>Needs Improvement</small>
                         </div>
             
                         <div class="rating">
@@ -41,13 +59,10 @@
             
                     <div class="evaluators-button">
                         <div>
-                            <button class="user-btn" id="employee-btn" onclick="chooseUser('employee')">Employee</button>
+                            <button class="user-btn" id="ntp-btn" onclick="chooseUser('ntp')">NTP</button>
+                            <button class="user-btn" id="faculty-btn" onclick="chooseUser('faculty')">Faculty</button>
                             <button class="user-btn" id="student-btn" onclick="chooseUser('student')">Student</button>
-                        </div>
-                        <div class="line"></div>
-                        <div>
-                            <button class="user-btn" id="highschool-btn" onclick="chooseDepartment('highschool')">High School</button>
-                            <button class="user-btn" id="college-btn" onclick="chooseDepartment('college')">College</button>
+                            <button class="user-btn" id="visitor-btn" onclick="chooseUser('visitor')">Visitor</button>
                         </div>
                     </div>
     
@@ -68,6 +83,7 @@
     </div>
     
     <img src="images/CLIR.png" alt="LOGO" class="logo">
+
     <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
     <script src="app.js"></script>
 </body>

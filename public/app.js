@@ -1,21 +1,28 @@
-const ratingsRequiringComment = ['Bad', 'Average'];
+const ratingsRequiringComment = ['Needs Improvement', 'Average'];
 const ratings = document.querySelectorAll('.rating img');
 const submitBtn = document.querySelector('.submit-btn');
 const feedbackForm = document.querySelector('.feedback-form');
 const feedbackRatings = document.querySelector('.feedback-ratings');
 const finishForm = document.querySelector('.feedback-respond');
 const feedbackComment = document.querySelector('.feedback-comment');
-const employeeBtn = document.getElementById('employee-btn');
-const studentBtn = document.getElementById('student-btn');
 const highschoolBtn = document.getElementById('highschool-btn');
 const collegeBtn = document.getElementById('college-btn');
+const content = document.querySelector('.content-wrapper');
+const divChooseDepartment = document.querySelector('.chooseDepartment');
 
 const socket = io();
 
 let selectedRating = '';
 let comment = "";
 let selectedUser = "";
-let selectedDepartment = "";
+let selectedDepartment = getSelectedDepartmentFromCookie() || "";
+
+const userButtons = {
+  ntp: document.getElementById("ntp-btn"),
+  faculty: document.getElementById("faculty-btn"),
+  student: document.getElementById("student-btn"),
+  visitor: document.getElementById("visitor-btn")
+};
 
 // Function to update the time
 function updateTime() {
@@ -48,6 +55,15 @@ function updateTime() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+  if (selectedDepartment == "" || selectedDepartment == null) {
+    content.style.display = "none";
+    divChooseDepartment.style.display = "block";
+  } else {
+    content.style.display = "block";
+    divChooseDepartment.style.display = "none";
+  }
+  document.getElementById("department").value = selectedDepartment;
+
   ratings.forEach((rating) => {
       rating.addEventListener('click', function() {
           // Reset all rating images to grayscale
@@ -72,7 +88,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (selectedRating !== '' && selectedUser !== '' && selectedDepartment !== '') {
       comment = feedbackComment.value;
       
-      // console.log(selectedRating);
+      console.log(selectedUser);
 
       // Send the data to the server
       fetch('/submit-rating', {
@@ -115,26 +131,26 @@ document.addEventListener('DOMContentLoaded', function() {
         reset()
       }, 4000);
     } else {
+      // console.log('Please fill in all fields.');
+
       if(selectedRating == '') {
         feedbackRatings.classList.add('shake-fields');
       }
 
       if(selectedUser == '') {
-        employeeBtn.classList.add('shake-fields');
-      studentBtn.classList.add('shake-fields');
-      }
-
-      if(selectedDepartment == '') {
-        highschoolBtn.classList.add('shake-fields');
-        collegeBtn.classList.add('shake-fields');
+        for (let key in userButtons) {
+          if (userButtons.hasOwnProperty(key)) {
+            userButtons[key].classList.add('shake-fields');
+          }
+        }
       }
       
       setTimeout(() => {
-        feedbackRatings.classList.remove('shake-fields');
-        employeeBtn.classList.remove('shake-fields');
-        studentBtn.classList.remove('shake-fields');
-        highschoolBtn.classList.remove('shake-fields');
-        collegeBtn.classList.remove('shake-fields');
+        for (let key in userButtons) {
+          if (userButtons.hasOwnProperty(key)) {
+            userButtons[key].classList.remove('shake-fields');
+          }
+        }
       }, 1000);
       
     }
@@ -144,42 +160,55 @@ document.addEventListener('DOMContentLoaded', function() {
   setInterval(updateTime, 1000);
 });
 
+function resetUser() {
+  // Reset button states and divs
+  for (let key in userButtons) {
+    if (userButtons.hasOwnProperty(key)) {
+      userButtons[key].classList.remove('user-active');
+    }
+  }
+}
+
 function chooseUser(user) {
-  if (user == "employee") {
-    studentBtn.classList.remove('user-active');
-    employeeBtn.classList.add('user-active');
-    selectedUser = "employee";
-  } else if (user == "student") {
-    studentBtn.classList.add('user-active');
-    employeeBtn.classList.remove('user-active');
-    selectedUser = "student";
-  }
+  resetUser();
+
+  // Set active button and display appropriate div
+  userButtons[user].classList.add('user-active');
+
+  selectedUser = user;
 }
-function chooseDepartment(dept) {
-  if (dept == "highschool") {
-    collegeBtn.classList.remove('user-active');
-    highschoolBtn.classList.add('user-active');
-    selectedDepartment = "highschool";
-  } else if (dept == "college") {
-    collegeBtn.classList.add('user-active');
-    highschoolBtn.classList.remove('user-active');
-    selectedDepartment = "college";
-  }
+
+function chooseDepartment(department) {
+  selectedDepartment = department;
+
+  // Save selectedDepartment to a cookie
+  document.cookie = "selectedDepartment=" + encodeURIComponent(department) + "; path=/; max-age=" + (60 * 60 * 24 * 30);
+
+  content.style.display = "block";
+  divChooseDepartment.style.display = "none";
 }
+
+function getSelectedDepartmentFromCookie() {
+  const cookies = document.cookie.split("; ");
+  for (let i = 0; i < cookies.length; i++) {
+    const cookie = cookies[i].split("=");
+    if (cookie[0] === "selectedDepartment") {
+      return decodeURIComponent(cookie[1]);
+    }
+  }
+  return null; // Returns null if the cookie is not found
+}
+
 
 // Reset all inputs and ratings
 function reset() {
   selectedRating = '';
   comment = '';
   selectedUser = '';
-  selectedDepartment = '';
   feedbackComment.value = '';
   feedbackComment.style.display = 'none';
   ratings.forEach((img) => img.style.filter = 'none');
-  studentBtn.classList.remove('user-active');
-  employeeBtn.classList.remove('user-active');
-  highschoolBtn.classList.remove('user-active');
-  collegeBtn.classList.remove('user-active');
+  resetUser();
 }
 
 

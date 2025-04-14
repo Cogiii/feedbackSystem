@@ -64,7 +64,7 @@ function updateFeedbackTable(data) {
             const row = table.insertRow();
             const userCell = row.insertCell(0);
             const commentCell = row.insertCell(1);
-            userCell.textContent = feedback.user.charAt(0).toUpperCase() + feedback.user.slice(1); // Capitalize first letter
+            userCell.textContent = (feedback.user == "ntp")? feedback.user.toUpperCase() : feedback.user.charAt(0).toUpperCase() + feedback.user.slice(1); // Capitalize first letter
             commentCell.innerHTML = feedback.comment;
         }
     });
@@ -107,19 +107,22 @@ function getFeedbackStats() {
         return response.json();
     })
     .then(data => {
+        console.log(data)
         // Count users by type
-        const employeeCount = data.employee_feedback_count;
+        const ntpCount = data.ntp_feedback_count;
+        const facultyCount = data.faculty_feedback_count;
         const studentCount = data.student_feedback_count;
-        const totalUsers = employeeCount + studentCount;
+        const visitorCount = data.visitor_feedback_count;
+        const totalUsers = ntpCount + studentCount + visitorCount + facultyCount;
 
         // Create Evaluators Chart
-        const evaluatorsLabels = ["Employee", "Student"];
-        const evaluatorsData = [employeeCount, studentCount, 0, totalUsers];
-        const evaluatorsColors = ["red", "blue"];
+        const evaluatorsLabels = ["NTP", "Faculty", "Student", "Visitor"];
+        const evaluatorsData = [ntpCount, facultyCount, studentCount, visitorCount, 0, totalUsers];
+        const evaluatorsColors = ["red", "blue", "green", "yellow"];
         createChart("evaluators-chart", "bar", evaluatorsLabels, evaluatorsData, evaluatorsColors, "Evaluators (Users)");
 
         // Create Ratings Chart
-        const ratingsLabels = ["Bad", "Average", "Good"];
+        const ratingsLabels = ["Needs Improvement", "Average", "Good"];
         const ratingsData = [data.bad_count, data.average_count, data.good_count];
 
         // Calculate percentages
