@@ -1,7 +1,19 @@
 {
   "name": "mmcm-library-feedback-system",
-  "version": "1.0.10",
-  "description": "MMCM Feedback System",
+  "version": "1.1.0",
+  "description": "MMCM CLIR Feedback System",
+  "contributors": [
+    {
+      "name": "Keian Mar",
+      "email": "keianrenheartmar@gmail.com",
+      "url": "https://github.com/7kei"
+    },
+    {
+      "name": "Laurence Kharl Devera",
+      "email": "dlaurencekharl@gmail.com",
+      "url": "https://github.com/Cogiii"
+    }
+  ],
   "main": "./server.js",
   "bin": "./server.js",
   "scripts": {
@@ -22,6 +34,7 @@
   "pkg": {
     "assets": [
       "node_modules/sqlite3/build/Release/node_sqlite3.node",
+      "csv_to_xlsx.py",
       "public/**/*"
     ],
     "targets": [

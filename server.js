@@ -5,15 +5,76 @@ const { networkInterfaces } = require('os');
 const { body, validationResult } = require('express-validator');
 const { Server } = require('socket.io');
 const { createServer } = require('node:http');
+const { exec, execSync } = require('child_process');
 
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
+const fs = require('fs');
+const util = require('util');
 const sqlite3 = require('sqlite3').verbose();
 const app = express();
 const server = createServer(app);
 const io = new Server(server);
 const PORT = process.env.PORT || 5000;
+
+// Convert exec to Promise-based function
+const execPromise = util.promisify(exec);
+
+// Function to check Python and required packages
+async function checkPythonDependencies() {
+    console.log("Checking Python installation and dependencies...");
+    
+    try {
+        // Check if Python is installed
+        try {
+            execSync('python --version', { stdio: 'pipe' });
+            console.log("Python is installed.");
+        } catch (pythonError) {
+            try {
+                execSync('py -3 --version', { stdio: 'pipe' });
+                console.log("Python 3 is installed (using py launcher).");
+            } catch (py3Error) {
+                console.error("Error: Python is not installed or not in PATH.");
+                console.error("Please install Python 3 and try again.");
+                process.exit(1);
+            }
+        }
+        
+        // Check if required packages are installed
+        const requiredPackages = ['pandas', 'openpyxl'];
+        const missingPackages = [];
+        
+        for (const pkg of requiredPackages) {
+            try {
+                // Use a Python command to check if the package is installed
+                const pythonCmd = process.platform === 'win32' ? 'py -3' : 'python';
+                execSync(`${pythonCmd} -c "import ${pkg}"`, { stdio: 'pipe' });
+                console.log(`Package ${pkg} is installed.`);
+            } catch (error) {
+                console.log(`Package ${pkg} is missing.`);
+                missingPackages.push(pkg);
+            }
+        }
+        
+        // If there are missing packages, install them
+        if (missingPackages.length > 0) {
+            console.log(`Installing missing packages: ${missingPackages.join(', ')}`);
+            
+            const pythonCmd = process.platform === 'win32' ? 'py -3' : 'python';
+            await execPromise(`${pythonCmd} -m pip install ${missingPackages.join(' ')}`);
+            
+            console.log("All required Python packages are now installed.");
+        } else {
+            console.log("All required Python packages are already installed.");
+        }
+        
+        return true;
+    } catch (error) {
+        console.error("Error checking Python dependencies:", error.message);
+        process.exit(1);
+    }
+}
 
 // database
 let db = new sqlite3.Database('./feedback.db', (err) => {
@@ -223,54 +284,153 @@ io.on('connection', (socket) => {
    });
 });
 
-app.get('/download-csv', async (req, res) => {
-    let sql = `SELECT user,department,rating,comment,date FROM Feedback`;
-
-    if (req.query.start && req.query.end) {
-        sql += ` WHERE date BETWEEN '${req.query.start}' AND '${req.query.end}'`
-    }
-
-    if (req.query.department === 'highschool') {
-        sql += ` AND department = 'highschool'`;
-    } else if (req.query.department === 'college') {
-        sql += ` AND department = 'college'`;
-    }
-
-    var stri = new Array();
-    stri.push("user,department,rating,comment,date");
-    db.all(sql, [], (err, rows) => {
-        if (err) {
-            throw err;
+function generateCsvFromSql(params) {
+    return new Promise((resolve, reject) => {
+        let sql = `SELECT user,department,rating,comment,date FROM Feedback`;
+        let conditions = [];
+        
+        if (params.start && params.end) {
+            conditions.push(`date BETWEEN '${params.start}' AND '${params.end}'`);
         }
-        rows.forEach((row) => {
-            let string = `${row.user}, ${row.department}, ${row.rating}, ${unescapeHTML(row.comment)}, ${row.date}`;
-            stri.push(string);
+        
+        if (params.department === 'highschool') {
+            conditions.push(`department = 'highschool'`);
+        } else if (params.department === 'college') {
+            conditions.push(`department = 'college'`);
+        }
+        
+        if (conditions.length > 0) {
+            sql += ` WHERE ${conditions.join(' AND ')}`;
+        }
+        
+        db.all(sql, [], (err, rows) => {
+            if (err) {
+                return reject(err);
+            }
+            
+            const csvRows = ["user,department,rating,comment,date"];
+            
+            rows.forEach((row) => {
+                let rowString = `${row.user},${row.department},${row.rating},${unescapeHTML(row.comment)},${row.date}`;
+                csvRows.push(rowString);
+            });
+            
+            const csvData = csvRows.join('\n');
+            resolve(csvData);
         });
-        const csvData = stri.join('\n');
+    });
+}
+
+app.get('/download-csv', async (req, res) => {
+    try {
+        const csvData = await generateCsvFromSql(req.query);
         res.header('Content-Type', 'text/csv');
         res.header('Content-Disposition', 'attachment; filename="feedbacks.csv"');
         res.send(csvData);
-    });
+    } catch (err) {
+        console.error('Error generating CSV:', err);
+        res.status(500).send('Error generating CSV file');
+    }
 });
 
-// 404 handler: keep this at the end, so it only catches requests that don’t match any defined routes
+app.get('/download-excel', async (req, res) => {
+    const scriptFilePath = path.join(process.cwd(), 'csv_to_xlsx.py');
+    const csvFilePath = path.join(process.cwd(), 'temp_csv_data.csv');
+    const excelFilePath = path.join(process.cwd(), 'final_xlsx_data.xlsx');
+    
+    try {
+        // Generate CSV data
+        const csvData = await generateCsvFromSql(req.query);
+        
+        // Save CSV data to a temporary file
+        await fs.promises.writeFile(csvFilePath, csvData);
+        
+        // Execute Python script and wait for it to finish
+        const pythonCmd = process.platform === 'win32' ? 'py -3' : 'python';
+        await execPromise(`${pythonCmd} ${scriptFilePath}`);
+
+        var date = new Date();
+        var dateString = new Date(date.getTime() - (date.getTimezoneOffset() * 60000 ))
+                            .toISOString()
+                            .split("T")[0];
+        
+        // Check if Excel file was created
+        if (fs.existsSync(excelFilePath)) {
+            // Send the Excel file to the user
+            res.header('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            res.header('Content-Disposition', `attachment; filename="feedbacks-${dateString}.xlsx"`);
+            
+            // Stream the file to the response
+            const fileStream = fs.createReadStream(excelFilePath);
+            fileStream.pipe(res);
+            
+            // Clean up files after response is sent
+            fileStream.on('end', () => {
+                cleanupFiles(csvFilePath, excelFilePath);
+            });
+        } else {
+            throw new Error('Excel file was not created');
+        }
+    } catch (err) {
+        console.error('Error generating Excel file:', err);
+        
+        // Clean up any temporary files
+        cleanupFiles(csvFilePath, excelFilePath);
+        
+        res.status(500).send('Error generating Excel file');
+    }
+});
+
+// Helper function to clean up temporary files
+function cleanupFiles(csvPath, excelPath) {
+    // Delete CSV file if it exists
+    if (fs.existsSync(csvPath)) {
+        fs.unlink(csvPath, (err) => {
+            if (err) console.error('Error deleting CSV file:', err);
+        });
+    }
+    
+    // Delete Excel file if it exists
+    if (fs.existsSync(excelPath)) {
+        fs.unlink(excelPath, (err) => {
+            if (err) console.error('Error deleting Excel file:', err);
+        });
+    }
+}
+
+// 404 handler: keep this at the end, so it only catches requests that don't match any defined routes
 app.use((req, res) => {
     res.status(404);
     res.send(`<h1>Error 404: Resource not found</h1>`);
 });
 
-// Start server
-server.listen(PORT, () => {
-    console.log("Server is running on these interfaces:");
-    const nets = networkInterfaces();
-    for (const name of Object.keys(nets)) {
-        for (const net of nets[name]) {
-            const familyV4Value = typeof net.family === 'string' ? 'IPv4' : 4
-            if (net.family === familyV4Value && !net.internal) {
-                console.log(`${name}: http://${net.address}:${PORT}/`);
-                console.log(`${name}: http://${net.address}:${PORT}/getfeedbacks`);
+// Check Python dependencies before starting the server
+async function startServer() {
+    try {
+        await checkPythonDependencies();
+        
+		console.log("");
+		
+        // Start server only after dependencies are checked
+        server.listen(PORT, () => {
+            console.log("Server is running on these interfaces:");
+            const nets = networkInterfaces();
+            for (const name of Object.keys(nets)) {
+                for (const net of nets[name]) {
+                    const familyV4Value = typeof net.family === 'string' ? 'IPv4' : 4
+                    if (net.family === familyV4Value && !net.internal) {
+                        console.log(`${name}: http://${net.address}:${PORT}/`);
+                        console.log(`${name}: http://${net.address}:${PORT}/getfeedbacks`);
+                    }
+                }
             }
-        }
+            console.log("");
+        });
+    } catch (error) {
+        console.error("Failed to start server:", error);
+        process.exit(1);
     }
-    console.log("");
-});
+}
+
+// Start the server with dependency checking
+startServer();

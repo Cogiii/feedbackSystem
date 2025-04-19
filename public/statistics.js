@@ -148,12 +148,12 @@ function getFeedbackStats() {
     });
 }
 
-function downloadCSV() {
+function downloadExcel() {
     const startDate = document.getElementById('start-date').value;
     const endDate = document.getElementById('end-date').value;
     const department = document.getElementById('department-input').value;
 
-    let url = `/download-csv?department=${department}`;
+    let url = `/download-excel?department=${department}`;
     if (startDate && endDate) {
         url += `&start=${startDate}&end=${endDate}`;
     }
@@ -172,7 +172,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('department-input').addEventListener('change', getFeedbackStats);
 
     // Download csv button
-    document.querySelector('.download').addEventListener('click', downloadCSV);
+    document.querySelector('.download').addEventListener('click', downloadExcel);
 });
 
 socket.on('submit-rating', (arg) => {
