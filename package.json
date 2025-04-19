@@ -1,6 +1,6 @@
 {
   "name": "mmcm-library-feedback-system",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "MMCM CLIR Feedback System",
   "contributors": [
     {
@@ -10,7 +10,7 @@
     },
     {
       "name": "Laurence Kharl Devera",
-      "email": "dlaurencekharl@gmail.com",
+      "email": "laurencekharld@gmail.com",
       "url": "https://github.com/Cogiii"
     }
   ],

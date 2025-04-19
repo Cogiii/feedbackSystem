@@ -28,6 +28,8 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: mmcm-library-feedback-system.exe
+          files: |
+            mmcm-library-feedback-system.exe
+            csv_to_xlsx.py
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
