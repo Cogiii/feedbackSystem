@@ -100,6 +100,12 @@ const alterBadToNeedsImprovementSql = `
     WHERE rating = 'Bad'
     `;
 
+const alterEmployeeToFacultyImprovementSql = `
+    UPDATE Feedback
+    SET user = 'faculty'
+    WHERE user = 'employee'
+    `;
+
 db.run(createFeedbackTableSql, function (err) {
     if (err) {
         return console.error('Error creating table:', err.message);
@@ -109,7 +115,13 @@ db.run(createFeedbackTableSql, function (err) {
 
 db.run(alterBadToNeedsImprovementSql, function (err) {
     if (err) {
-        return console.error('Error altering table:', err.message);
+        return console.error('Error altering table bad to needs improvement:', err.message);
+    }
+});
+
+db.run(alterEmployeeToFacultyImprovementSql, function (err) {
+    if (err) {
+        return console.error('Error altering table employee to faculty:', err.message);
     }
 });
 
