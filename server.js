@@ -94,11 +94,23 @@ const createFeedbackTableSql = `
         date TEXT NOT NULL
     )`;
 
+const alterBadToNeedsImprovementSql = `
+    UPDATE Feedback
+    SET rating = 'Needs Improvement'
+    WHERE rating = 'Bad'
+    `;
+
 db.run(createFeedbackTableSql, function (err) {
     if (err) {
         return console.error('Error creating table:', err.message);
     }
     // console.log('Table created successfully');
+});
+
+db.run(alterBadToNeedsImprovementSql, function (err) {
+    if (err) {
+        return console.error('Error altering table:', err.message);
+    }
 });
 
 function unescapeHTML(str) {
